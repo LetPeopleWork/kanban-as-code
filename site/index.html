@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Kanban as Code</title>
+  <meta name="description" content="A draft standard for keeping a Kanban system in plain markdown files, so any tool can read the same files.">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%232f5548'/%3E%3Crect x='7' y='8' width='5' height='16' rx='1' fill='%23fff'/%3E%3Crect x='14' y='8' width='5' height='10' rx='1' fill='%23fff'/%3E%3Crect x='21' y='8' width='5' height='6' rx='1' fill='%23fff'/%3E%3C/svg%3E">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="wrap top">
+    <span class="name">Kanban as Code</span>
+    <span class="badge">v0.1 draft, RFC</span>
+  </header>
+
+  <main class="wrap">
+    <section class="hero">
+      <h1>Your Kanban system, in plain markdown files</h1>
+      <p class="lead">Kanban as Code is a draft standard for how to structure work items, workflow and transitions in markdown. The files live in your repo, next to the people and agents doing the work, and any tool can read them.</p>
+    </section>
+
+    <section class="hub" aria-label="One set of files, read by many tools">
+      <div class="reader r1"><h3>Boards</h3><p>Show the work</p></div>
+      <div class="reader r2"><h3>Flow metrics</h3><p>Cycle time, WIP, work item age, throughput</p></div>
+      <figure class="file">
+        <figcaption>work/42-export-report.md</figcaption>
+<pre><code>---
+id: 42
+title: Export the report
+status: Doing
+---</code></pre>
+      </figure>
+      <div class="reader r3"><h3>Agents</h3><p>Pull work and move it</p></div>
+      <div class="reader r4"><h3>The next tool</h3><p>Same files, nothing to migrate</p></div>
+    </section>
+    <p class="note">Illustration only. The file format is not defined yet.</p>
+
+    <section>
+      <h2>The standard</h2>
+      <p>Not written yet. We will start from the Kanban Guide and from what we learned building flow metrics into Lighthouse. It will come with use cases: which tools read the files, which visualizations they make possible, and why you would want them.</p>
+      <p><a href="https://github.com/LetPeopleWork/kanban-as-code/blob/main/SPEC.md">SPEC.md on GitHub</a></p>
+    </section>
+
+    <section>
+      <h2>Tools</h2>
+      <p>The standard belongs to no tool. This list only says what is true today.</p>
+      <table>
+        <thead><tr><th>Tool</th><th>Status</th></tr></thead>
+        <tbody>
+          <tr><td><a href="https://github.com/MrLesk/Backlog.md">Backlog.md</a></td><td>Compatible by design, not tested yet</td></tr>
+          <tr><td><a href="https://letpeople.work/lighthouse">Lighthouse</a></td><td>Planned</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section>
+      <h2>Examples and skills</h2>
+      <p>Sample boards and setup skills for agents will land in the repo once the standard exists: <a href="https://github.com/LetPeopleWork/kanban-as-code/tree/main/examples">examples</a>, <a href="https://github.com/LetPeopleWork/kanban-as-code/tree/main/skills">skills</a>, <a href="https://github.com/LetPeopleWork/kanban-as-code/tree/main/tools">tools</a>.</p>
+    </section>
+  </main>
+
+  <footer class="wrap foot">
+    <p>A draft by <a href="https://letpeople.work">LetPeopleWork</a>. Standard under CC BY 4.0, code under MIT. <a href="https://github.com/LetPeopleWork/kanban-as-code">GitHub</a></p>
+  </footer>
+</body>
+</html>
