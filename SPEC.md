@@ -237,7 +237,7 @@ Monte Carlo forecasting needs finished items per day and how many items remain. 
 
 ### Let agents do the work
 
-Agents already work in the repo, so the board is right there for them. They read the policies in the workflow file, pull a card, and git keeps them from taking the same one. A skill can do the moving, so developers keep working the way they like and the board stays true.
+Agents already work in the repo, so the board is right there for them. They read the policies in the workflow file, pull a card, and git keeps them from taking the same one. A skill can do the moving, so developers keep working the way they like. The standard is built so that agents can keep the board true; whether they do is something each team should check in its own history.
 
 ### Audit what happened
 
