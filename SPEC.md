@@ -259,4 +259,5 @@ The work and its whole history stay in the repo when a tool goes away.
 - How do we split or merge a state, beyond retiring it?
 - Should `at` also accept a plain date, for teams that only track days?
 - Should the standard name one way to mark entries that a tool rebuilt, for example from git?
+- How does a team discard a card it will not do? Delete the file, or move it to a `done` state with a reason?
 - What is the right file layout when a team wants one board across many repos?
