@@ -17,7 +17,7 @@ Part of this spec is the **core**: what a tool needs to show a board and compute
 | Core (stable) | Draft (may change at any time) |
 | --- | --- |
 | File layout: a workflow file and a `cards/` folder next to it (section 1) | `sources`: cards in other folders, branches or repos (sections 2 and 5) |
-| Workflow file: `key`, `states` with `id`, `name`, `category`, `retired`; the body says how WIP is controlled and the policies; optional `sle` (section 2) | The dedicated `kanban` branch, and the setups beyond trunk-based (section 5) |
+| Workflow file: `key`, `states` with `id`, `name`, `category`, `retired`; `sle`; the body says how WIP is controlled and the policies (section 2) | The dedicated `kanban` branch, and the setups beyond trunk-based (section 5) |
 | Card: `id`, `title`, `status`, `transitions`; tools keep fields they do not know (section 3) | References across repos (section 7) |
 | History: `to`, `at`, optional `by`; time order; last `to` equals `status`; append only; invalid cards; derived dates (section 4) | `parent` and `dependencies` (section 3) |
 | Pulling work: a move is one change to one file (section 6) | The other optional card fields: `type`, `labels`, `assignee`, `order`, `blocked`, `url`. Read them, do not depend on them. |
@@ -75,7 +75,7 @@ Test: someone other than the author has run it.
 | `key` | yes | Short name of the workflow. It starts every card ID, and it MUST be unique across the workflows a tool reads. |
 | `states` | yes | The states in board order. See below. |
 | `sources` | no | Where the cards live. See section 5. Default: `cards/` next to the workflow file. |
-| `sle` | no | Service level expectation: `days` and `probability` in percent. |
+| `sle` | yes | Service level expectation: `days` and `probability` in percent. |
 
 Each state has these fields:
 
@@ -92,7 +92,9 @@ A state MUST NOT be deleted while any history refers to it. Mark it `retired` in
 
 The body of the workflow file is free text. It MUST say how the team controls WIP and what its policies for each state are. These are text because the Kanban Guide leaves the method open: a number per column is one way to control WIP, and there are many others.
 
-The `sle` field is optional because a tool MAY calculate an SLE from history. A team still needs one to run a Kanban system, and keeping it here means it survives a change of tool.
+The `sle` field is required. A team needs a service level expectation to run a Kanban system, and keeping it in the file means it survives a change of tool. A tool MAY suggest a value from the history, but the team sets it.
+
+These parts of the Kanban Guide are not optional: a workflow file without `sle`, or without a body that says how WIP is controlled and what the policies are, is invalid.
 
 ## 3. Cards
 
@@ -233,7 +235,7 @@ Commits SHOULD mention the card `id` in their message. Then `git log --grep PAY-
 | States between start and finish | `states` |
 | How WIP is controlled | Workflow body |
 | Policies for each state | Workflow body |
-| Service level expectation | `sle`, or a tool |
+| Service level expectation | `sle` (required) |
 | More than one workflow where needed | One workflow file each |
 | WIP, throughput, work item age, cycle time | Calculated by tools from history |
 | Visualization | Any tool. We define none. |
@@ -283,5 +285,5 @@ The work and its whole history stay in the repo when a tool goes away.
 
 ## Changelog
 
-- 2026-11-25: The history lives in each card (`transitions`), not in git. `history: git` removed. `parent_task_id` renamed to `parent`. Core and draft marked. First example: [`examples/single-team`](examples/single-team/).
+- 2026-11-25: `sle` is required, and a workflow without WIP control and policies is invalid. The history lives in each card (`transitions`), not in git. `history: git` removed. `parent_task_id` renamed to `parent`. Core and draft marked. First example: [`examples/single-team`](examples/single-team/).
 - 2026-11-07: First draft.
