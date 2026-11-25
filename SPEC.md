@@ -106,7 +106,7 @@ Tools recognize these optional fields:
 | `type` | The kind of work, for example `bug`. |
 | `labels` | A list of tags. |
 | `assignee` | Who is on it. A list when people pair. |
-| `parent_task_id` | The `id` of the parent card. It MAY be in another workflow or repo. |
+| `parent` | The `id` of the parent card. It MAY be in another workflow or repo. |
 | `dependencies` | A list of card `id`s this card waits for. |
 | `order` | Position among the cards in the same state. Lower comes first. |
 | `blocked` | `true` while the card is blocked. |
@@ -201,7 +201,7 @@ Git does the locking. If two people or agents pull the same card, the second pus
 
 ## 7. References across repos
 
-A card is referred to by its `id`, for example `PORT-7`. Keys make these unique, so `parent_task_id: PORT-7` works across repos. A tool is told which workflows to read, and it finds the card by its key.
+A card is referred to by its `id`, for example `PORT-7`. Keys make these unique, so `parent: PORT-7` works across repos. A tool is told which workflows to read, and it finds the card by its key.
 
 Commits SHOULD mention the card `id` in their message. Then `git log --grep PAY-42` gives the trail of a piece of work in a repo, and the same search in each repo covers the rest.
 
@@ -233,7 +233,7 @@ From the transitions a tool can draw a cycle time scatterplot, a work item age c
 
 ### Forecast
 
-Monte Carlo forecasting needs finished items per day and how many items remain. Both come from the files. With `parent_task_id` and `order`, a tool can forecast features and portfolios too.
+Monte Carlo forecasting needs finished items per day and how many items remain. Both come from the files. With `parent` and `order`, a tool can forecast features and portfolios too.
 
 ### Let agents do the work
 
