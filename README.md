@@ -2,7 +2,7 @@
 
 A draft standard for keeping a Kanban system in plain markdown files, so any tool can read the same files.
 
-Status: v0.1 draft, RFC. Read [SPEC.md](SPEC.md) and tell us what is wrong with it.
+Status: v0.1 draft, not finished. A small core is stable enough to build on; the rest will change as we build the first tools. Read [SPEC.md](SPEC.md) and tell us what is wrong with it: kanbanascode@letpeople.work
 
 Site: https://kanban-as-code.letpeople.work
 

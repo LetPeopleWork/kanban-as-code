@@ -4,66 +4,165 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Kanban as Code</title>
-  <meta name="description" content="A draft standard for keeping a Kanban system in plain markdown files, so any tool can read the same files.">
+  <meta name="description" content="A draft standard for keeping your work items and their full history as plain files in git, in an open format that any tool can read.">
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%232f5548'/%3E%3Crect x='7' y='8' width='5' height='16' rx='1' fill='%23fff'/%3E%3Crect x='14' y='8' width='5' height='10' rx='1' fill='%23fff'/%3E%3Crect x='21' y='8' width='5' height='6' rx='1' fill='%23fff'/%3E%3C/svg%3E">
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
   <header class="wrap top">
     <span class="name">Kanban as Code</span>
-    <span class="badge">v0.1 draft, RFC</span>
+    <span class="badge">v0.1 draft. Not finished. It will change as we build.</span>
   </header>
 
   <main class="wrap">
     <section class="hero">
-      <h1>Your Kanban system, in plain markdown files</h1>
-      <p class="lead">Kanban as Code is a draft standard for how to structure work items, workflow and transitions in markdown. The files live in your repo, next to the people and agents doing the work, and any tool can read them.</p>
+      <h1>Your work items and their history, as plain files in git</h1>
+      <p class="lead">Keep your work items and their full history as plain files in git, in an open format that any tool can read. It is designed so that your flow data outlives any one tool, and so that it works on any git host.</p>
+      <p class="small">Designed to work on any git host. Checked on GitHub so far.</p>
     </section>
 
-    <section class="hub" aria-label="One set of files, read by many tools">
-      <div class="reader r1"><h3>Boards</h3><p>Show the work</p></div>
-      <div class="reader r2"><h3>Flow metrics</h3><p>Cycle time, WIP, work item age, throughput</p></div>
+    <section aria-labelledby="card">
+      <h2 id="card">One card</h2>
       <figure class="file">
-        <figcaption>kanban/cards/PAY-42-export-report.md</figcaption>
+        <figcaption>kanban/cards/SHOP-7-make-the-checkout-work-with-a-screen.md</figcaption>
 <pre><code>---
-id: PAY-42
-title: Export the report
-status: build
+id: SHOP-7
+title: Make the checkout work with a screen reader
+status: review
 transitions:
-  - { to: ready, at: 2026-11-02T09:00:00Z }
-  - { to: build, at: 2026-11-04T14:30:00+01:00 }
----</code></pre>
+  - { to: next, at: 2026-11-03T09:00:00+01:00, by: mia }
+  - { to: build, at: 2026-11-16T09:30:00+01:00, by: sara }
+  - { to: review, at: 2026-11-23T17:00:00+01:00, by: sara }
+---
+
+Labels and focus order on the three checkout steps.</code></pre>
       </figure>
-      <div class="reader r3"><h3>Agents</h3><p>Pull work and move it</p></div>
-      <div class="reader r4"><h3>The next tool</h3><p>Same files, nothing to migrate</p></div>
-    </section>
-    <p class="note">One card. It holds where it is now and how it got there, so a tool needs nothing but the file.</p>
-
-    <section>
-      <h2>The standard</h2>
-      <p>A first draft is out for comment. It builds on the Kanban Guide and on what we learned building flow metrics into Lighthouse, and it comes with use cases: which tools read the files, which visualizations they make possible, and why you would want them.</p>
-      <p><a href="https://github.com/LetPeopleWork/kanban-as-code/blob/main/SPEC.md">SPEC.md on GitHub</a></p>
+      <p class="note">One card holds where it is now and how it got there, so a tool needs nothing but the file.</p>
     </section>
 
-    <section>
-      <h2>Tools</h2>
-      <p>The standard belongs to no tool. This list only says what is true today.</p>
+    <section aria-labelledby="sides">
+      <h2 id="sides">Writers on the left, readers on the right</h2>
+      <div class="sides">
+        <div class="side">
+          <h3>Writers</h3>
+          <ul>
+            <li>Agent skill <span class="st planned">planned</span></li>
+            <li>Card UI <span class="st planned">planned</span></li>
+            <li>Your editor <span class="st exists">exists</span></li>
+            <li>Your own script <span class="st exists">exists</span></li>
+          </ul>
+        </div>
+        <div class="middle">
+          <h3>The files</h3>
+          <p><code>workflow.md</code><br><code>cards/*.md</code></p>
+          <p class="small">what this standard defines</p>
+        </div>
+        <div class="side">
+          <h3>Readers</h3>
+          <ul>
+            <li>Boards <span class="st planned">planned</span></li>
+            <li>Flow metrics <span class="st planned">planned</span></li>
+            <li>Forecasts <span class="st planned">planned</span></li>
+            <li>The next tool: same files, nothing to migrate <span class="st exists">exists</span></li>
+          </ul>
+        </div>
+      </div>
+      <p class="note">We define the middle only. Everything on the left and the right is a tool, and any tool can be yours. Git holds the files and records who changed them. No reader has to speak git, and no host API is used.</p>
+    </section>
+
+    <section aria-labelledby="why">
+      <h2 id="why">Why a standard and not a tool</h2>
+      <p>Tools that kept issues in git have existed for years: ditz, TicGit, Bugs Everywhere. Each had its own format, and when the tool went quiet, so did the format. A format that belongs to one tool lives as long as that tool.</p>
+      <p>Other formats exist today: Backlog.md, git-bug, todo.txt and several newer markdown task formats for agents. We know them and learned from them. What this draft adds is the history inside each card, and a workflow file with the states, the WIP policy and the service level expectation, as the <a href="https://kanbanguides.org/the-kanban-guide/">Kanban Guide</a> asks for.</p>
+      <p>This standard defines the files only. It defines no board, no chart and no forecast. Those are the job of the tools that read the files.</p>
+    </section>
+
+    <section aria-labelledby="cases">
+      <h2 id="cases">Use cases</h2>
+      <div class="scroll">
       <table>
-        <thead><tr><th>Tool</th><th>Status</th></tr></thead>
+        <thead><tr><th>Who</th><th>What they can do</th><th>Status</th><th>Limit today</th></tr></thead>
         <tbody>
-          <tr><td><a href="https://letpeople.work/lighthouse">Lighthouse</a></td><td>Planned</td></tr>
+          <tr><td>Developer with an agent</td><td>The agent picks a card, does the work, and writes the move and its transition in the same commit. The standard is built so that agents can do this.</td><td><span class="st planned">planned</span></td><td>How well agents do this over time is not measured.</td></tr>
+          <tr><td>Single team</td><td>One workflow file holds the states, how the team controls WIP and its SLE. The cards hold the work. A reading tool computes cycle time, WIP, work item age and throughput from the history.</td><td><span class="st exists">exists</span> files and example<br><span class="st planned">planned</span> reading tool</td><td>Flow metrics from these files are designed, not built.</td></tr>
+          <tr><td>Several teams or repos</td><td>Each team keeps its own workflow file, folder or repo. One tool reads all of them.</td><td><span class="st draft">draft</span></td><td>A view across teams needs a tool. We claim none.</td></tr>
+          <tr><td>Portfolio, more than two levels</td><td>Parent and child cards across levels in the same format, with the <code>parent</code> field.</td><td><span class="st draft">draft</span></td><td>We have not yet talked to anyone who runs a portfolio this way.</td></tr>
+          <tr><td>Tool maker</td><td>Read the files and show a board. Then write: keep fields you do not know, and append a transition on every move.</td><td><span class="st exists">exists</span> core and example<br><span class="st planned">planned</span> conformance checks</td><td>There is no validator yet, so "standard compatible" cannot be checked.</td></tr>
+          <tr><td>Metrics and forecasting tool</td><td>Read the transitions, then compute flow metrics and Monte Carlo forecasts. <a href="https://letpeople.work/lighthouse">Lighthouse</a> will be the first reader.</td><td><span class="st planned">planned</span></td><td>Not built.</td></tr>
+          <tr><td>Product owner or manager</td><td>See the work without git. That needs a viewer, and a viewer is a tool.</td><td><span class="st planned">planned</span></td><td>Today the tools you already use serve this better.</td></tr>
+          <tr><td>Agent</td><td>Reads the workflow file to learn the states and the policies, then moves cards.</td><td><span class="st planned">planned</span></td><td>Same as the developer row.</td></tr>
         </tbody>
       </table>
+      </div>
     </section>
 
-    <section>
-      <h2>Examples and skills</h2>
-      <p>This repo tracks its own work with the standard: see <a href="https://github.com/LetPeopleWork/kanban-as-code/tree/main/kanban">its board</a>. More sample boards and setup skills for agents will follow: <a href="https://github.com/LetPeopleWork/kanban-as-code/tree/main/examples">examples</a>, <a href="https://github.com/LetPeopleWork/kanban-as-code/tree/main/skills">skills</a>, <a href="https://github.com/LetPeopleWork/kanban-as-code/tree/main/tools">tools</a>.</p>
+    <section aria-labelledby="core">
+      <h2 id="core">What you can build on</h2>
+      <div class="two">
+        <div>
+          <h3>Core, stable</h3>
+          <ul>
+            <li>File layout: a workflow file and a <code>cards/</code> folder</li>
+            <li>Workflow: <code>key</code>, <code>states</code> with the categories todo, doing and done; how WIP is controlled and the policies in the body; optional SLE</li>
+            <li>Card: <code>id</code>, <code>title</code>, <code>status</code>, <code>transitions</code>; tools keep fields they do not know</li>
+            <li>History: append only, the last entry equals <code>status</code>, start and finish dates derived from it</li>
+            <li>A move is one change to one file</li>
+          </ul>
+        </div>
+        <div>
+          <h3>Draft, may change</h3>
+          <ul>
+            <li>Cards in other folders, branches or repos</li>
+            <li>References across repos</li>
+            <li><code>parent</code> and <code>dependencies</code></li>
+            <li>Other optional fields, such as <code>labels</code> or <code>blocked</code></li>
+            <li>The open questions at the end of the spec</li>
+          </ul>
+        </div>
+      </div>
+      <p>We will not change the core without announcing it first: a new version number, a dated changelog line, and a direct message to everyone who has told us they build on it. This is a promise about how we behave, not a guarantee that the core is right. We are building a writer and a reader ourselves, and they may prove a core rule wrong.</p>
+      <p><a href="https://github.com/LetPeopleWork/kanban-as-code/blob/main/SPEC.md">Read the spec</a></p>
+    </section>
+
+    <section aria-labelledby="today">
+      <h2 id="today">What exists today</h2>
+      <ul>
+        <li>The <a href="https://github.com/LetPeopleWork/kanban-as-code/blob/main/SPEC.md">spec</a>, version 0.1.</li>
+        <li>An <a href="https://github.com/LetPeopleWork/kanban-as-code/tree/main/examples/single-team">example for a single team</a>: a made-up web shop, ten cards with their history. It is deliberately simple. Examples for several teams, several repos and more than two levels come later.</li>
+        <li>This repo tracks its own work with the standard: <a href="https://github.com/LetPeopleWork/kanban-as-code/tree/main/kanban">its board</a>.</li>
+        <li>A <a href="https://github.com/LetPeopleWork/kanban-as-code/tree/main/tools">tool</a> that rebuilds missing history from git, for cards that had none.</li>
+      </ul>
+      <p>Planned next: an agent skill that moves cards, a card UI, and Lighthouse as the first reader.</p>
+    </section>
+
+    <section aria-labelledby="where">
+      <h2 id="where">Where we are</h2>
+      <div class="box">
+        <p>Used by its two authors on their own board (179 cards on 2026-11-25). No independent implementation yet. No standards body and no neutral owner.</p>
+      </div>
+    </section>
+
+    <section aria-labelledby="faq">
+      <h2 id="faq">Questions</h2>
+      <h3>Why not GitHub Issues with a coding agent?</h3>
+      <p>Here the cards are files in your repo, with their whole history in each file. The standard is designed to work on any git host: GitHub, GitLab, Gitea, Forgejo or your own server. So far we have checked it on GitHub.</p>
+      <h3>Why not Backlog.md?</h3>
+      <p>Backlog.md is prior art, and we learned from it. This draft keeps the history inside each card and adds a workflow file with the WIP policy and the SLE. We make no compatibility claim.</p>
+      <h3>Who owns this?</h3>
+      <p>For now, LetPeopleWork wrote it. There is no standards body and no neutral owner yet. The standard is under CC BY 4.0, so anyone can use it.</p>
+      <h3>Is it stable?</h3>
+      <p>The core is stable enough to build on, and we announce any change to it. The rest is a draft.</p>
+    </section>
+
+    <section aria-labelledby="answer">
+      <h2 id="answer">Tell us</h2>
+      <p>What would you read or write with this?</p>
+      <p><a class="button" href="mailto:kanbanascode@letpeople.work">kanbanascode@letpeople.work</a></p>
     </section>
   </main>
 
   <footer class="wrap foot">
-    <p>A draft by <a href="https://letpeople.work">LetPeopleWork</a>. Standard under CC BY 4.0, code under MIT. <a href="https://github.com/LetPeopleWork/kanban-as-code">GitHub</a></p>
+    <p>A draft by <a href="https://letpeople.work">LetPeopleWork</a>, makers of Lighthouse. No standards body or neutral owner. Standard under CC BY 4.0, code under MIT. <a href="https://github.com/LetPeopleWork/kanban-as-code">GitHub</a></p>
   </footer>
 </body>
 </html>
