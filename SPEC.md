@@ -1,6 +1,6 @@
 # Kanban as Code
 
-Version 0.1, draft for comment. Not finished: it will change as we build the first tools that write and read these files. A small core is stable enough to build on, see [Core and draft](#core-and-draft).
+Version 0.1, draft for comment. Not finished: it will change as we build the first tools that write and read these files. Changes are listed in the [changelog](#changelog).
 
 Feedback: kanbanascode@letpeople.work
 
@@ -9,23 +9,6 @@ Kanban as Code describes how to keep a Kanban system in plain markdown files, us
 The words MUST, SHOULD and MAY have their usual meaning from RFC 2119.
 
 This spec builds on [The Kanban Guide](https://kanbanguides.org/the-kanban-guide/) (May 2025). Read the guide for what a Kanban system is and why. This document only says where each part goes in the files.
-
-## Core and draft
-
-Part of this spec is the **core**: what a tool needs to show a board and compute a cycle time. You can build on it now. The rest is **draft**.
-
-| Core (stable) | Draft (may change at any time) |
-| --- | --- |
-| File layout: a workflow file and a `cards/` folder next to it (section 1) | `sources`: cards in other folders, branches or repos (sections 2 and 5) |
-| Workflow file: `key`, `states` with `id`, `name`, `category`, `retired`; `sle`; the body says how WIP is controlled and the policies (section 2) | The dedicated `kanban` branch, and the setups beyond trunk-based (section 5) |
-| Card: `id`, `title`, `status`, `transitions`; tools keep fields they do not know (section 3) | References across repos (section 7) |
-| History: `to`, `at`, optional `by`; time order; last `to` equals `status`; append only; invalid cards; derived dates (section 4) | `parent` and `dependencies` (section 3) |
-| Pulling work: a move is one change to one file (section 6) | The other optional card fields: `type`, `labels`, `assignee`, `order`, `blocked`, `url`. Read them, do not depend on them. |
-| | Everything in section 10 |
-
-**What "stable" means.** We will not remove or rename a core field, and we will not add a required field, without announcing it first. A change to the core gets a new version number, a dated line in the changelog below, and a direct message to everyone who has told us they are building on it. Draft parts can change at any time.
-
-This is a promise about how we behave, not a guarantee that the core is right. We are building a writer and a reader ourselves, and that may prove a core rule wrong. If it does, we change it and announce it the same way.
 
 ## 1. Overview
 
@@ -285,5 +268,5 @@ The work and its whole history stay in the repo when a tool goes away.
 
 ## Changelog
 
-- 2026-11-25: `sle` is required, and a workflow without WIP control and policies is invalid. The history lives in each card (`transitions`), not in git. `history: git` removed. `parent_task_id` renamed to `parent`. Core and draft marked. First example: [`examples/single-team`](examples/single-team/).
+- 2026-11-25: `sle` is required, and a workflow without WIP control and policies is invalid. The history lives in each card (`transitions`), not in git. `history: git` removed. `parent_task_id` renamed to `parent`. First example: [`examples/single-team`](examples/single-team/).
 - 2026-11-07: First draft.
