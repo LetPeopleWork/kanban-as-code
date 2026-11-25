@@ -2,7 +2,7 @@
 
 Version 0.1, draft for comment. Nothing here is stable yet.
 
-Kanban as Code describes how to keep a Kanban system in plain markdown files in git. It defines the files only. Boards, charts and forecasts are the job of whatever tool reads them, and any tool can.
+Kanban as Code describes how to keep a Kanban system in plain markdown files, usually in git. It defines the files only. Boards, charts and forecasts are the job of whatever tool reads them, and any tool can.
 
 The words MUST, SHOULD and MAY have their usual meaning from RFC 2119.
 
@@ -15,7 +15,7 @@ There are two kinds of file:
 - A **workflow file** defines one workflow: its states, where its cards live and how the team runs it.
 - A **card** is one work item, one markdown file with frontmatter.
 
-Everything else comes from git. Who moved a card, when, and from which state to which is in the commit history, so a card only has to hold its current state.
+A card holds its current state and every transition that led there: which state it entered, when, and optionally who moved it. A tool needs nothing but the files. It does not have to read git, and squash merges, rebases and shallow clones lose nothing.
 
 ```
 kanban/
@@ -36,7 +36,6 @@ A workflow file is markdown with YAML frontmatter. By default it is `kanban/work
 key: PAY
 sources:
   - { repo: acme/payments, branch: kanban, paths: [cards/] }
-history: git
 states:
   - { id: ready, name: Ready, category: todo }
   - { id: build, name: Build, category: doing }
@@ -57,7 +56,6 @@ Test: someone other than the author has run it.
 | `key` | yes | Short name of the workflow. It starts every card ID, and it MUST be unique across the workflows a tool reads. |
 | `states` | yes | The states in board order. See below. |
 | `sources` | no | Where the cards live. See section 5. Default: `cards/` next to the workflow file. |
-| `history` | no | `git` (default) or `file`. See section 4. |
 | `sle` | no | Service level expectation: `days` and `probability` in percent. |
 
 Each state has these fields:
@@ -86,6 +84,9 @@ A card is a markdown file with YAML frontmatter. The body is free text.
 id: PAY-42
 title: Export the report
 status: build
+transitions:
+  - { to: ready, at: 2026-11-02T09:00:00Z }
+  - { to: build, at: 2026-11-04T14:30:00+01:00, by: alice }
 ---
 
 What we want and why.
@@ -96,6 +97,7 @@ What we want and why.
 | `id` | yes | Unique within the workflow, and it starts with the workflow's `key` and a hyphen. |
 | `title` | yes | What the work is. |
 | `status` | yes | The `id` of the current state. |
+| `transitions` | yes | The card's history. See section 4. |
 
 Tools recognize these optional fields:
 
@@ -103,13 +105,12 @@ Tools recognize these optional fields:
 | --- | --- |
 | `type` | The kind of work, for example `bug`. |
 | `labels` | A list of tags. |
-| `assignee` | Who is on it, when git history is not enough, for example when people pair. |
+| `assignee` | Who is on it. A list when people pair. |
 | `parent_task_id` | The `id` of the parent card. It MAY be in another workflow or repo. |
 | `dependencies` | A list of card `id`s this card waits for. |
 | `order` | Position among the cards in the same state. Lower comes first. |
 | `blocked` | `true` while the card is blocked. |
 | `url` | A link to the same item somewhere else. |
-| `transitions` | The card's history. Only with `history: file`. See section 4. |
 
 Teams MAY add any other field. Tools MUST keep fields they do not know when they rewrite a card.
 
@@ -117,33 +118,37 @@ After the key, an ID is any string, so a team can choose. A plain counter is fin
 
 ## 4. History
 
-A tool needs every transition of a card: the state it entered, and when. The workflow's `history` field says where they come from. There is one source per workflow, so a reader never has to guess.
-
-### `history: git`
-
-Transitions come from the commit history of the card's branch, following first parents:
-
-- A transition is a commit that changes `status`.
-- The time of the transition is the committer date.
-- The person who moved the card is the commit author.
-- The commit that adds the file is the card's creation, and its `status` is the first state.
-- Each move SHOULD be its own commit, and it SHOULD be pushed right away.
-
-This branch MUST NOT be rewritten. Squash merges and rebases lose transitions or change their times.
-
-A tool that reads this history needs a full clone. A shallow one is not enough.
-
-### `history: file`
-
-Every card carries its whole history. This suits teams who squash merge the branch their cards are on, and setups without git.
+A tool needs every transition of a card: the state it entered, and when. Every card carries them in `transitions`, so the files are the only source.
 
 ```yaml
+status: build
 transitions:
   - { to: ready, at: 2026-11-02T09:00:00Z }
-  - { to: build, at: 2026-11-04T13:30:00Z, by: alice }
+  - { to: build, at: 2026-11-04T14:30:00+01:00, by: alice }
 ```
 
-The list MUST be complete, in time order, and end with the current `status`. `by` is optional. The first entry is the card's creation. A skill or a hook SHOULD write these entries, because people will forget.
+Each entry has these fields:
+
+| Field | Required | Meaning |
+| --- | --- | --- |
+| `to` | yes | The `id` of the state the card entered. |
+| `at` | yes | When, as an ISO 8601 date and time with a time zone offset or `Z`. |
+| `by` | no | Who moved the card. |
+
+The rules:
+
+- The first entry is the card's creation, and its `to` is the state the card started in.
+- The list MUST be in time order, and the `to` of its last entry MUST equal `status`.
+- A move is one change to the file: set `status` and add an entry. A skill or a hook SHOULD do it, because people forget.
+- Entries are only added, never changed or removed. A person MAY correct an obvious mistake by hand.
+
+The history lives in the file, not in a version control system, so that any tool can read it. Git still matters: it stores the files, records who changed them, and does the locking in section 6. But no reader has to speak git.
+
+### When status and history disagree
+
+If `status` is not the `to` of the last entry, or `transitions` is missing, the card is invalid. A tool SHOULD report it and MUST NOT invent the missing entries silently.
+
+A tool MAY offer a repair, for example by rebuilding the entries from the git history of the file, and it SHOULD show which entries it added that way. How such a repair works is not part of this standard.
 
 ### Derived dates
 
@@ -179,7 +184,7 @@ The rule behind all setups: the declared location is the truth. A card on any ot
 
 ### The dedicated branch
 
-If a team works on feature branches, a move on a feature branch is invisible to everyone until it merges, and a squash merge then destroys it. To avoid both, cards can live on a `kanban` branch that shares no history with the code and is never merged:
+If a team works on feature branches, a move on a feature branch is invisible to everyone until it merges. The history survives the merge, even a squash merge, because it is in the file. But until then the board is out of date, and two people can pull the same card without noticing. Teams who want the board current at all times can keep the cards on a `kanban` branch that shares no history with the code and is never merged:
 
 ```sh
 git worktree add --orphan -b kanban .kanban
@@ -190,9 +195,9 @@ Moves are commits to that branch, pushed straight away. Code branches and merges
 
 ## 6. Pulling work
 
-Pulling a card is a move like any other: change `status` to a `doing` state, commit and push. There is no separate claim.
+Pulling a card is a move like any other: change `status` to a `doing` state, add the transition, commit and push. There is no separate claim.
 
-Git does the locking. If two people or agents pull the same card, the second push is refused and the rebase conflicts on the `status` line. Whoever lost picks another card. This only works when everyone pushes to the same branch, which is another reason for the rule in section 5.
+Git does the locking. If two people or agents pull the same card, the second push is refused and the rebase conflicts on the `status` line and the new entry. Whoever lost picks another card. This only works when everyone pushes to the same branch, which is another reason for the rule in section 5.
 
 ## 7. References across repos
 
@@ -236,7 +241,7 @@ Agents already work in the repo, so the board is right there for them. They read
 
 ### Audit what happened
 
-Every move is a commit with a person and a time, and code commits point to their card. As long as the branch isn't rewritten, that record holds.
+Every move is an entry with a time and, if given, a person. In git each move is also a commit, so the version history confirms the entries, and code commits point to their card.
 
 ### Plan above the team
 
@@ -252,4 +257,6 @@ The work and its whole history stay in the repo when a tool goes away.
 - Cycle time in whole days or exact time? Should it count the first day? The guide doesn't say, and without a rule two tools can show different numbers for the same files.
 - Does a tool need a shared way to find workflows, or is telling it enough?
 - How do we split or merge a state, beyond retiring it?
+- Should `at` also accept a plain date, for teams that only track days?
+- Should the standard name one way to mark entries that a tool rebuilt, for example from git?
 - What is the right file layout when a team wants one board across many repos?

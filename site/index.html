@@ -29,12 +29,15 @@
 id: PAY-42
 title: Export the report
 status: build
+transitions:
+  - { to: ready, at: 2026-11-02T09:00:00Z }
+  - { to: build, at: 2026-11-04T14:30:00+01:00 }
 ---</code></pre>
       </figure>
       <div class="reader r3"><h3>Agents</h3><p>Pull work and move it</p></div>
       <div class="reader r4"><h3>The next tool</h3><p>Same files, nothing to migrate</p></div>
     </section>
-    <p class="note">One card. Its history comes from git, so the file only holds where it is now.</p>
+    <p class="note">One card. It holds where it is now and how it got there, so a tool needs nothing but the file.</p>
 
     <section>
       <h2>The standard</h2>
